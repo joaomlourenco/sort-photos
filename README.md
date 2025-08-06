@@ -1,5 +1,5 @@
 # sort-photos
-Group and organize media files by GPS and capture date.
+Group and organize media files by capture date and GPS location.
 
 # About
 This si a personal project to manage my photos.
