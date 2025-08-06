@@ -28,7 +28,7 @@ windows: download from the [`exiftool` web page](https://exiftool.org)
 
 # Usage
 
-```shell
+```text
 usage: sort-pohotos.py [-h] [-r] [-s {Nominatim,OpenCage,LocationIQ}]
                        [-p PRECISION] [-n] [-l] [-c] [-k SERVICE:KEY]
                        [-a SOURCE=DEST] [-v] [-d]
