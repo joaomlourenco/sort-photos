@@ -2,12 +2,12 @@
 Group and organize media files by capture date and GPS location.
 
 # About
-This si a personal project to manage my photos.
+This is a personal project to manage my photos.
 The script takes a list of folder or file names and…
 
-1. read the metadata of the files in the given folders using the external tool [`exiftool`](https://exiftool.org) and extract the file creation time and the GPS coordinates is available.
-2. apply a revers geolocation too map the GPS coordinates to the name of the place using one of these services: [`Nominatim`](https://nominatim.org), [`OpenCage`](https://opencagedata.com), or [`LocationIQ`](https://locationiq.com).
-3. for each folder, group the files into by date and location and move them into a new sub-folder named `YYYY-MM-DD Loocation`
+1. Reads the metadata of the files in the given folders using the external tool [`exiftool`](https://exiftool.org) and extract the file creation time and the GPS coordinates is available.
+2. Applies a reverse geolocation to map the GPS coordinates to the name of the place using one of these services: [`Nominatim`](https://nominatim.org), [`OpenCage`](https://opencagedata.com), or [`LocationIQ`](https://locationiq.com).  Defaults to [`Nominatim`](https://nominatim.org),
+3. For each folder, group the files by date and location and move them into a new sub-folder named `YYYY-MM-DD Loocation`.
 
 # Dependencies
 
