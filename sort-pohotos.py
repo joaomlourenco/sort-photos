@@ -73,7 +73,10 @@ def extract_coordinates_and_dates(file_list: List[str], precision: int,
         lon_str = item.get("GPSLongitude")
         # get creation date from metadata
         date_str_1 = item.get("CreationDate") or item.get("CreateDate") or item.get("DateTimeOriginal") or item.get("GPSDateStamp") or item.get("GPSDateTime")
-        date_str_1 = date_str_1.split()[0].replace(':','-')
+        if date_str_1 is not None:
+            date_str_1 = date_str_1.split()[0].replace(':','-')
+        else:
+            date_str_1 = "9999-99-99"
         # get creation date form OS
         stat = os.stat(source_file)
         try:
@@ -88,17 +91,22 @@ def extract_coordinates_and_dates(file_list: List[str], precision: int,
         date_str = min(date_str_1, date_str_2)
         # print (f"DEBUG [{date_str_1}] [{date_str_2}] [{date_str}]")
                 
-        if lat_str and lon_str and date_str:
-            try:
-                if debug:
-                    print(f"Parsing: {source_file}")
-                    print(f"  Raw GPS: {lat_str}, {lon_str}, {date_str}")
-                lat = gps_string_to_decimal(lat_str, precision, debug=debug)
-                lon = gps_string_to_decimal(lon_str, precision, debug=debug)
-                date = date_str.split()[0].replace(":", "-")  # 'YYYY:MM:DD' -> 'YYYY-MM-DD'
-                results.append((source_file, lat, lon, date))
-            except Exception as e:
-                print(f"  Error parsing metadata for {source_file}: {e}")
+        # if lat_str and lon_str and date_str:
+        if debug:
+            print(f"Parsing: {source_file}")
+            print(f"  Raw GPS: {lat_str}, {lon_str}, {date_str}")
+        try:
+            lat = gps_string_to_decimal(lat_str, precision, debug=debug)
+        except Exception as e:
+            lat = None
+        try:
+            lon = gps_string_to_decimal(lon_str, precision, debug=debug)
+        except Exception as e:
+            lon = None
+        date = date_str.split()[0].replace(":", "-")  # 'YYYY:MM:DD' -> 'YYYY-MM-DD'
+        results.append((source_file, lat, lon, date))
+        # except Exception as e:
+        #     print(f"  Error parsing metadata for {source_file}: {e}")
     return results
 
 def collect_media_files(paths: List[str], recursive: bool = False, debug: bool = False, 
@@ -254,7 +262,10 @@ def gps_to_location(req_queue: Queue, res_queue: Queue, service: str, lock: Lock
             file, lat, lon, date = req_queue.get(timeout=1)
         except Empty:
             continue
-        location, last_request_time = lookup_location_cached(lat, lon, service, lock, last_request_time, cache, debug)
+        if lat is None or lon is None:
+            location = ""
+        else:
+            location, last_request_time = lookup_location_cached(lat, lon, service, lock, last_request_time, cache, debug)
         timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
         res_queue.put((file, lat, lon, date, location, timestamp))
 
@@ -355,7 +366,7 @@ def main():
     media_files = collect_media_files(args.inputs, recursive=args.recursive, debug=args.debug, verbose=args.verbose)
     gps_data = extract_coordinates_and_dates(media_files, args.precision, debug=args.debug)
     
-    # if at least one meida file has GPS data/info
+    # if at least one medida file has GPS data/info
     if gps_data:
     
         for item in gps_data:
